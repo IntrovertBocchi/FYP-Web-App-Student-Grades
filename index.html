@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Grade Calculator</title>
+  <link rel="stylesheet" href="index.css">  
+  <script src="index.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Student Grade Predictor</h2>
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" placeholder="Enter marks out of 100">
+
+    <label for="attendance">Attendance:</label>
+    <input type="number" id="attendance" placeholder="Enter marks out of 100">
+
+    <label for="sleepinghours">Sleeping Hours:</label>
+    <input type="number" id="sleepinghours" placeholder="Enter marks out of 100">
+
+    <label for="studyhours">Study Hours:</label>
+    <input type="number" id="studyhours" placeholder="Enter marks out of 100">
+
+    <button onclick="calculateGrade()">Calculate</button>
+    <div id="result"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pkcls
+*.pkl
+*.sqlite3
+
+# Environment
+env/
+venv/
+ENV/
+.venv/
+*.env
+
+# VSCode
+.vscode/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Flask instance or secrets
+instance/
+*.log

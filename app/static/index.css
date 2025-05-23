@@ -8,12 +8,36 @@ body {
   }
   
   .container {
+    text-align: center;
+    margin-top: 10px;
     background-color: #fff;
     padding: 20px 30px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
+
+  .container label, .container select {
+    display: block;
+    margin: 0 auto;
+  }
   
+  .container select {
+    width: 60%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  #dynamic-fields {
+    margin-bottom: 20px;
+  }
+
+  #dynamic-fields > * {
+    margin-top: 20px;
+  }
+
   h2 {
     text-align: center;
     margin-bottom: 20px;

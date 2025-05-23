@@ -54,10 +54,8 @@ function showfields() {
       <label>Report A (25): <input type="number" id="report_a" max="25" step="0.01" min="0"/></label>
       <label>Report B (20): <input type="number" id="report_b" max="20" step="0.01" min="0"/></label>
       <label>Group Exercise (5): <input type="number" id="group_exercise" max="5" step="0.01" min="0"/></label>
-      <label>CLA Scores (10):</label>
-      <input type="number" id="cla" max="10" step="0.01" min="0"/>
-      <label>Quiz Scores (15):</label>
-      <input type="number" id="quiz" max="15" step="0.01" min="0"/>
+      <label>CLA Scores (10): <input type="number" id="cla" max="10" step="0.01" min="0"/></label>
+      <label>Quiz Scores (15):<input type="number" id="quiz" max="15" step="0.01" min="0"/></label>
     `;
     
     // Enforce decimal limit on all inputs
@@ -84,8 +82,7 @@ function showfields() {
   } else if (program === 'ADV') {
 
      container.innerHTML = `
-      <label>Quiz Scores (20):</label>
-      <input type="number" id="quiz" max="20" step="0.01" min="0"/>
+      <label>Quiz Scores (20): <input type="number" id="quiz" max="20" step="0.01" min="0"/></label>
       <label>Assignment 1 (10): <input type="number" id="assignment1" max="10" step="0.01" min="0"/></label>
       <label>Assignment 2 (40): <input type="number" id="assignment2" max="40" step="0.01" min="0"/></label>
       <label>OBOW Test (30): <input type="number" id="obow_test" max="30" step="0.01" min="0"/></label>

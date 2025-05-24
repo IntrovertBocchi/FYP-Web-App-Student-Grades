@@ -33,7 +33,7 @@ def create_app():
 
             user = User.query.filter_by(username=username).first()
 
-            if user and user.check_password(password) and master == "XinTong_18824-1995":
+            if user and user.check_password(password) and master == MASTER_KEY:
                 session['username'] = username
                 return redirect(url_for('index'))
             else:

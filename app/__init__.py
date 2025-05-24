@@ -12,21 +12,6 @@ load_dotenv() #Load variables from .env
 
 MASTER_KEY =os.environ.get("MASTER_KEY")
 
-def verify_integrity():
-    expected_hash = os.environ.get("INIT_HASH")
-    if not expected_hash:
-        raise SystemExit("Missing INIT_HASH environment variable. Access denied.")
-
-    file_path = os.path.abspath(__file__)
-    with open(file_path, 'rb') as f:
-        content = f.read()
-    current_hash = hashlib.sha256(content).hexdigest()
-
-    if current_hash != expected_hash:
-        raise SystemExit("🚨 Tampering detected. This instance is not authorized to run.")
-
-verify_integrity()
-
 def create_app():
     app = Flask(__name__)
 

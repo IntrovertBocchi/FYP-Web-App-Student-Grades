@@ -1,7 +1,7 @@
 # app/security/lock.py
 import hashlib, os
 
-def verify_init_file():
+def initialize():
     expected_hash = os.environ.get("INIT_HASH")
     if not expected_hash:
         raise SystemExit("Missing INIT_HASH.")
@@ -12,4 +12,4 @@ def verify_init_file():
     current_hash = hashlib.sha256(content).hexdigest()
 
     if current_hash != expected_hash:
-        raise SystemExit("Tampering detected.")
+        raise SystemExit("Tampering detected. This is the day you will always remember as the day you almost stole our code.")

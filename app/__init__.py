@@ -1,14 +1,12 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from app.models import db, User
+from app.utils.core_utils import initialize
 from app.predictor import predict_and_validate
-import hashlib
 import os
-
-from app.security.lock import verify_init_file
-verify_init_file()
 
 from dotenv import load_dotenv #load .env support
 load_dotenv() #Load variables from .env
+initialize() #Perform necessary environment setup and checks before app startup
 
 MASTER_KEY =os.environ.get("MASTER_KEY")
 

@@ -1,12 +1,31 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from app.models import db, User
 from app.predictor import predict_and_validate
+import hashlib
 import os
+
+from app.security.lock import verify_init_file
+verify_init_file()
 
 from dotenv import load_dotenv #load .env support
 load_dotenv() #Load variables from .env
 
 MASTER_KEY =os.environ.get("MASTER_KEY")
+
+def verify_integrity():
+    expected_hash = os.environ.get("INIT_HASH")
+    if not expected_hash:
+        raise SystemExit("Missing INIT_HASH environment variable. Access denied.")
+
+    file_path = os.path.abspath(__file__)
+    with open(file_path, 'rb') as f:
+        content = f.read()
+    current_hash = hashlib.sha256(content).hexdigest()
+
+    if current_hash != expected_hash:
+        raise SystemExit("🚨 Tampering detected. This instance is not authorized to run.")
+
+verify_integrity()
 
 def create_app():
     app = Flask(__name__)
@@ -74,3 +93,4 @@ def create_app():
         db.create_all()
 
     return app
+

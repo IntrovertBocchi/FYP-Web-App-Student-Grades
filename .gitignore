@@ -6,6 +6,7 @@ __pycache__/
 *.sqlite3
 
 # Environment
+.env
 env/
 venv/
 ENV/
@@ -22,3 +23,6 @@ Thumbs.db
 # Flask instance or secrets
 instance/
 *.log
+instance/grades.db
+create_users.py
+config.py

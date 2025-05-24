@@ -215,6 +215,7 @@ async function calculateGrade() {
 
   //Call Flask backend
   try {
+    
     const response = await fetch('/api/predict', {
       method: 'POST',
       headers: {

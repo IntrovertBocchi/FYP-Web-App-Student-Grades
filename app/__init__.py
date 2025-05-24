@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from app.models import db, User
-from app.utils.core_utils import initialize
+from app.utils.core_utils import setup_environment
 from app.predictor import predict_and_validate
 import os
 
 from dotenv import load_dotenv #load .env support
 load_dotenv() #Load variables from .env
-initialize() #Perform necessary environment setup and checks before app startup
+setup_environment() #Sets up necessary environment for web application to run
 
 MASTER_KEY =os.environ.get("MASTER_KEY")
 

@@ -67,7 +67,7 @@ def setup_environment():
         # In the rare case that the current file diverges from the expected baseline hash,
         # halt execution to prevent instability or misbehavior stemming from inconsistent core logic.
         raise SystemExit(
-            "Tampering detected. You've stolen our code, didn't you?"
+            "Tampering detected. This code is not authorized to run in this system."
         )
 
 def log_startup_time():

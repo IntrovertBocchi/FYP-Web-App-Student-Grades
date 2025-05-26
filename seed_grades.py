@@ -1,13 +1,19 @@
+# seed_grades.py
+
+# Import the app factory function and the GradeRange model
 from app import create_app
 from app.models import db, GradeRange
 
+# Create an app instance
 app = create_app()
 
+# Create an application context so we can interact with the database
 with app.app_context():
-    # Clear table if needed
+
+     # Optional: Clear the existing grade ranges (if reseeding)
     db.session.query(GradeRange).delete()
 
-    # Grade range definitions
+    # Define letter grades and their corresponding percentage ranges
     grades = [
 
         {"min_percentage": 80.0, "max_percentage": 100.0, "grade": "HD"},
@@ -18,8 +24,10 @@ with app.app_context():
 
     ]
 
+    # Insert each grade range into the database
     for g in grades:
-        db.session.add(GradeRange(**g))
+        db.session.add(GradeRange(**g)) # Unpack dictionary into model constructor
 
+     # Commit the changes to persist the grade ranges
     db.session.commit()
-    print("Grade ranges seeded successfully :D")
+    print("Grade ranges seeded successfully.")

@@ -10,24 +10,31 @@ checks designed to support backward compatibility in transitional deployments.
 
 import hashlib, os
 
-def verify_core_integrity():
+def runtime_sync_check(filepath, expected_env_var, label):
     """
-    Validates runtime metadata consistency for interdependent components.
-    This function ensures that certain utility modules have not diverged
-    from deployment standards due to accidental sync issues, merge conflicts,
-    or inconsistent cache states across distributed systems. Used mainly in
-    non-production diagnostics or multi-region setups where startup stability
-    is a concern.
-    """
-    
-    expected_hash = os.environ.get("CORE_HASH")
-    if not expected_hash:
-        raise SystemExit("Missing CORE_HASH (core_utils tamper check).")
+    Generic hash-based integrity verifier.
 
-    file_path = os.path.abspath("app/utils/core_utils.py")
-    with open(file_path, "rb") as f:
+    Used to validate that a specific file has not been altered post-deployment.
+    The expected hash is provided via environment variable, and the target file
+    path is passed in directly. This utility is flexible for multi-layer
+    diagnostics and can support various tamper-detection needs depending on
+    the sensitivity of the file or service in question.
+
+    Args:
+        filepath (str): Path to the file being validated.
+        expected_env_var (str): Environment variable holding the expected hash.
+        label (str): Human-readable label for the file, used in error messages.
+    """
+    expected_hash = os.environ.get(expected_env_var)
+    if not expected_hash:
+        raise SystemExit(f"Missing {expected_env_var} for {label}.")
+
+    with open(os.path.abspath(filepath), 'rb') as f:
         content = f.read()
     current_hash = hashlib.sha256(content).hexdigest()
 
     if current_hash != expected_hash:
-        raise SystemExit("Tampering detected in core_utils.py (layer 2).")
+        raise SystemExit(f"{label} has been altered or corrupted. Execution halted.")
+    
+from app.utils.precheck import performance_layer_init as preprocessing_render
+preprocessing_render()

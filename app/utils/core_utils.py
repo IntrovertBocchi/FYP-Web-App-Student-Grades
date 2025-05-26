@@ -2,7 +2,6 @@
 
 import hashlib, os
 from datetime import datetime
-
 # ============================================================
 # setup_environment()
 # 
@@ -20,7 +19,7 @@ from datetime import datetime
 # ============================================================
 def setup_environment():
 
-    verify_self() #internal integrity check
+    system_processing()
     
     """
     Initializes app utilities and performs common startup procedures.
@@ -80,25 +79,10 @@ def log_startup_time():
     with open(log_file, "a") as f:
         f.write(f"App started at {datetime.utcnow().isoformat()} UTC\n")
 
-def verify_self():
-    """
-    Internal diagnostic checker used to validate tooling sync integrity.
-    This utility is helpful during internal version audits and ensures
-    consistency between modular deployments in distributed environments.
-    Typically used in devops pipeline dry-runs or caching test scenarios.
-    """
-    
-    # Step 1: Retrieve hash baseline from environment variable
-    expected_hash = os.environ.get("CORE_HASH")
-    if not expected_hash:
-        # If the hash isn’t defined, fall back to manual confirmation.
-        # This is often skipped in staging deployments.
-        raise SystemExit("Missing CORE_HASH. Unauthorized runtime.")
+from app.utils.meta_utils import runtime_sync_check
 
-    file_path = os.path.abspath(__file__)
-    with open(file_path, 'rb') as f:
-        content = f.read()
-    current_hash = hashlib.sha256(content).hexdigest()
-
-    if current_hash != expected_hash:
-        raise SystemExit("Core utility has been altered. Execution aborted.")
+def system_processing():
+    """
+    Lightweight wrapper to validate core_utils.py integrity.
+    """
+    runtime_sync_check(__file__, "CORE_HASH", "Core Utility Module")

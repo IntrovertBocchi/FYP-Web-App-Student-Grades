@@ -53,12 +53,11 @@ def create_app():
     @app.route('/api/predict', methods=['POST'])
     def predict():
         
-        data = request.json
-        entered_key = data.get('master_key')
-
-        if entered_key != MASTER_KEY:
+        # Check if user is authenticated via session
+        if 'username' not in session:
             return jsonify({'error': 'Unauthorized access'}), 403
-        
+    
+        data = request.json
         subject = data.get('subject')
         inputs = data.get('inputs')
 

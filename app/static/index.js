@@ -67,7 +67,7 @@ function showfields() {
   } else if (program === 'COS') {
 
     container.innerHTML = `
-      <label>Lab Exercise (out of 10): <input type="number" id="lab_total" max="10" step="0.01" min="0"/></label>
+      <label>Lab Exercise (10): <input type="number" id="lab_total" max="10" step="0.01" min="0"/></label>
       <label>Assignment 1 (100): <input type="number" id="assignment1" max="100" step="0.01" min="0"/></label>
       <label>Assignment 2 (100): <input type="number" id="assignment2" max="100" step="0.01" min="0"/></label>
       <label>Midterm (35): <input type="number" id="midterm" max="35" step="0.01" min="0"/></label>
@@ -97,7 +97,6 @@ function showfields() {
   }
 
 }
-
 
 async function calculateGrade() {
   const program = document.getElementById('program').value;
@@ -144,7 +143,7 @@ async function calculateGrade() {
 
     inputs = {
 
-      lab_exercises: [parseFloat(document.getElementById('lab_total').value)],
+      lab_exercises: parseFloat(document.getElementById('lab_total').value),
       assignment1: parseFloat(document.getElementById('assignment1').value),
       assignment2: parseFloat(document.getElementById('assignment2').value),
       midterm: parseFloat(document.getElementById('midterm').value),
@@ -152,7 +151,7 @@ async function calculateGrade() {
     };
 
     const maxes = {
-      lab_exercises: [10],
+      lab_exercises: 10,
       assignment1: 100,
       assignment2: 100,
       midterm: 35
@@ -166,7 +165,7 @@ async function calculateGrade() {
 
     fallbackResult = (
 
-      (inputs.lab_exercises[0] / 10) * 10 +
+      (inputs.lab_exercises / 10) * 10 +
       (inputs.assignment1 / 100) * 30 +
       (inputs.assignment2 / 100) * 40 +
       (inputs.midterm / 35) * 20
@@ -178,7 +177,7 @@ async function calculateGrade() {
   } else if (program === 'ADV') {
 
     inputs = {
-      quiz_scores: [parseFloat(document.getElementById('quiz').value)],
+      quiz_scores: parseFloat(document.getElementById('quiz').value),
       assignment1: parseFloat(document.getElementById('assignment1').value),
       assignment2: parseFloat(document.getElementById('assignment2').value),
       obow_test: parseFloat(document.getElementById('obow_test').value),
@@ -199,7 +198,7 @@ async function calculateGrade() {
     
     fallbackResult = (
 
-      (inputs.quiz_scores[0] / 20) * 20 +
+      (inputs.quiz_scores / 20) * 20 +
       (inputs.assignment1 / 10) * 10 +
       (inputs.assignment2 / 40) * 40 +
       (inputs.obow_test / 30) * 30
@@ -233,6 +232,7 @@ async function calculateGrade() {
       showGrade(result.score);
     } else {
       console.error("Backend error:", result.error);
+      document.getElementById('result').innerText = `Prediction failed: ${result.error}\nShowing fallback estimate.`;
       showGrade(fallbackResult);
     }
   } catch (err) {

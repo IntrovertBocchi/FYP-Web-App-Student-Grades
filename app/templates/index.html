@@ -4,25 +4,35 @@
   <meta charset="UTF-8">
   <title>Student Grade Calculator</title>
   <link rel="stylesheet" href="{{url_for('static', filename='index.css') }}">  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{{ url_for('static', filename='index.js') }}" defer></script>
 </head>
 
 <body>
-  <div class="container">
-    <h2>Student Grade Predictor</h2>
+  <div class="page-wrapper">
+    <div class="container">
+      <h2>Student Grade Predictor</h2>
 
-    <label for="program">Select Program:</label>
-    <select id="program" onchange="showfields()">
-      <option value="">--Select--</option>
-      <option value="ADV">ADV</option>
-      <option value="COS">COS</option>
-      <option value="INF">INF</option>
-    </select>
+      <label for="program">Select Program:</label>
+      <select id="program" onchange="showfields()">
+        <option value="">--Select--</option>
+        <option value="ADV">ADV</option>
+        <option value="COS">COS</option>
+        <option value="INF">INF</option>
+      </select>
 
-    <div id="dynamic-fields"></div>
-    
-    <button onclick="calculateGrade()">Calculate</button>
-    <div id="result"></div>
+      <div id="dynamic-fields"></div>
+      
+      <button onclick="calculateGrade()">Calculate</button>
+      <div id="result"></div>
+
+      <div id="accuracy-section">
+        <h3>📊 Model Accuracy Overview</h3>
+        <canvas id="accuracy-chart"></canvas>
+        <p id="accuracy-text"></p>
+      </div>
+
+    </div>
   </div>
 </body>
 </html>

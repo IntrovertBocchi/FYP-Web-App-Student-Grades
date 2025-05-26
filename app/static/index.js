@@ -120,8 +120,8 @@ async function calculateGrade() {
       report_a: 25,
       report_b: 20,
       group_exercise: 5,
-      cla_scores: [10],
-      quiz_scores: [15]
+      cla_scores: 10,
+      quiz_scores: 15
     }
 
     const error = validateInputs(inputs, maxes);
@@ -134,8 +134,8 @@ async function calculateGrade() {
       (inputs.report_a / 25) * 25 +
       (inputs.report_b / 20) * 20 +
       (inputs.group_exercise / 5) * 5 +
-      (inputs.cla_scores[0] / 10) * 30 +
-      (inputs.quiz_scores[0] / 15) * 20
+      (inputs.cla_scores / 10) * 30 +
+      (inputs.quiz_scores / 15) * 20
     );
 
     endpointInputs = inputs;
@@ -278,3 +278,55 @@ function enforceTwoDecimalPlaces(input) {
     }
   });
 }
+
+// Fetch and display model accuracy
+function loadModelAccuracy() {
+  fetch('/api/accuracy')
+    .then(response => response.json())
+    .then(data => {
+      const accuracy = data.accuracy;
+      document.getElementById('accuracy-text').innerText = `Overall Accuracy: ${(accuracy * 100).toFixed(2)}%`;
+
+      const labels = Object.keys(data.details);
+      const precisions = labels.map(label => data.details[label].precision * 100);
+      const recalls = labels.map(label => data.details[label].recall * 100);
+
+      const ctx = document.getElementById('accuracy-chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Precision (%)',
+              backgroundColor: '#28a745',
+              data: precisions
+            },
+            {
+              label: 'Recall (%)',
+              backgroundColor: '#17a2b8',
+              data: recalls
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      });
+    })
+    .catch(error => {
+      document.getElementById('accuracy-text').innerText = "Failed to load model accuracy.";
+      console.error("Accuracy fetch error:", error);
+    });
+}
+
+// Call it on page load
+document.addEventListener("DOMContentLoaded", function () {
+  loadModelAccuracy();
+});

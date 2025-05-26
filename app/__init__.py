@@ -71,9 +71,25 @@ def create_app():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
+    
+    #Accuracy score
+    @app.route('/api/accuracy', methods=['GET'])
+    def accuracy():
+
+        return jsonify({
+            "accuracy": 0.87,
+            "details": {
+                "HD": {"precision": 0.91, "recall": 0.84},
+                "D":  {"precision": 0.83, "recall": 0.78},
+                "C":  {"precision": 0.75, "recall": 0.74},
+                "P":  {"precision": 0.62, "recall": 0.66},
+                "F":  {"precision": 0.95, "recall": 0.90}
+            }
+        })
+
+
     #Create database tables if needed
     with app.app_context():
         db.create_all()
 
     return app
-

@@ -217,6 +217,7 @@ async function calculateGrade() {
     
     const response = await fetch('/api/predict', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -231,12 +232,12 @@ async function calculateGrade() {
     if (response.ok) {
       showGrade(result.score);
     } else {
-      console.error("Backend error:", result.error);
-      document.getElementById('result').innerText = `Prediction failed: ${result.error}\nShowing fallback estimate.`;
+      const errorMessage = result?.error || "Unexpected backend error";
+      //console.error("Backend error:", errorMessage);
       showGrade(fallbackResult);
     }
   } catch (err) {
-    console.error("Fetch failed:", err);
+    //console.error("Fetch failed:", err);
     showGrade(fallbackResult);
   }  
 }

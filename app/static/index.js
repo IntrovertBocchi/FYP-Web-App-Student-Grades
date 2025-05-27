@@ -54,12 +54,12 @@ function showfields() {
       <label>Report A (25): <input type="number" id="report_a" max="25" step="0.01" min="0"/></label>
       <label>Report B (20): <input type="number" id="report_b" max="20" step="0.01" min="0"/></label>
       <label>Group Exercise (5): <input type="number" id="group_exercise" max="5" step="0.01" min="0"/></label>
-      <label>CLA Scores (10): <input type="number" id="cla" max="10" step="0.01" min="0"/></label>
-      <label>Quiz Scores (15):<input type="number" id="quiz" max="15" step="0.01" min="0"/></label>
+      <label>CLA Scores (10): <input type="number" id="cla_scores" max="10" step="0.01" min="0"/></label>
+      <label>Quiz Scores (15):<input type="number" id="quiz_scores" max="15" step="0.01" min="0"/></label>
     `;
     
     // Enforce decimal limit on all inputs
-    ['report_a', 'report_b', 'group_exercise', 'cla', 'quiz'].forEach(id => {
+    ['report_a', 'report_b', 'group_exercise', 'cla_scores', 'quiz_scores'].forEach(id => {
       const input = document.getElementById(id);
       if (input) enforceTwoDecimalPlaces(input);
     });
@@ -67,14 +67,14 @@ function showfields() {
   } else if (program === 'COS') {
 
     container.innerHTML = `
-      <label>Lab Exercise (10): <input type="number" id="lab_total" max="10" step="0.01" min="0"/></label>
+      <label>Lab Exercise (10): <input type="number" id="lab_exercises" max="10" step="0.01" min="0"/></label>
       <label>Assignment 1 (100): <input type="number" id="assignment1" max="100" step="0.01" min="0"/></label>
       <label>Assignment 2 (100): <input type="number" id="assignment2" max="100" step="0.01" min="0"/></label>
       <label>Midterm (35): <input type="number" id="midterm" max="35" step="0.01" min="0"/></label>
     `;
 
     // Enforce decimal limit on all inputs
-    ['lab_total', 'assignment1', 'assignment2', 'midterm'].forEach(id => {
+    ['lab_exercises', 'assignment1', 'assignment2', 'midterm'].forEach(id => {
       const input = document.getElementById(id);
       if (input) enforceTwoDecimalPlaces(input);
     });
@@ -82,14 +82,14 @@ function showfields() {
   } else if (program === 'ADV') {
 
      container.innerHTML = `
-      <label>Quiz Scores (20): <input type="number" id="quiz" max="20" step="0.01" min="0"/></label>
+      <label>Quiz Scores (20): <input type="number" id="quiz_scores" max="20" step="0.01" min="0"/></label>
       <label>Assignment 1 (10): <input type="number" id="assignment1" max="10" step="0.01" min="0"/></label>
       <label>Assignment 2 (40): <input type="number" id="assignment2" max="40" step="0.01" min="0"/></label>
       <label>OBOW Test (30): <input type="number" id="obow_test" max="30" step="0.01" min="0"/></label>
     `;
 
     // Enforce decimal limit on all inputs
-    ['quiz', 'assignment1', 'assignment2', 'obow_test'].forEach(id => {
+    ['quiz_scores', 'assignment1', 'assignment2', 'obow_test'].forEach(id => {
       const input = document.getElementById(id);
       if (input) enforceTwoDecimalPlaces(input);
     });
@@ -110,8 +110,8 @@ async function calculateGrade() {
       report_a: parseFloat(document.getElementById('report_a').value),
       report_b: parseFloat(document.getElementById('report_b').value),
       group_exercise: parseFloat(document.getElementById('group_exercise').value),
-      cla_scores: parseFloat(document.getElementById('cla').value),
-      quiz_scores: parseFloat(document.getElementById('quiz').value)
+      cla_scores: parseFloat(document.getElementById('cla_scores').value),
+      quiz_scores: parseFloat(document.getElementById('quiz_scores').value)
 
     };
 
@@ -143,7 +143,7 @@ async function calculateGrade() {
 
     inputs = {
 
-      lab_exercises: parseFloat(document.getElementById('lab_total').value),
+      lab_exercises: parseFloat(document.getElementById('lab_exercises').value),
       assignment1: parseFloat(document.getElementById('assignment1').value),
       assignment2: parseFloat(document.getElementById('assignment2').value),
       midterm: parseFloat(document.getElementById('midterm').value),
@@ -177,7 +177,7 @@ async function calculateGrade() {
   } else if (program === 'ADV') {
 
     inputs = {
-      quiz_scores: parseFloat(document.getElementById('quiz').value),
+      quiz_scores: parseFloat(document.getElementById('quiz_scores').value),
       assignment1: parseFloat(document.getElementById('assignment1').value),
       assignment2: parseFloat(document.getElementById('assignment2').value),
       obow_test: parseFloat(document.getElementById('obow_test').value),
@@ -230,14 +230,14 @@ async function calculateGrade() {
     const result = await response.json();
 
     if (response.ok) {
-      showGrade(result.score);
+      showGrade(result.predicted_score);
     } else {
       const errorMessage = result?.error || "Unexpected backend error";
-      //console.error("Backend error:", errorMessage);
+      console.error("Backend error:", errorMessage);
       showGrade(fallbackResult);
     }
   } catch (err) {
-    //console.error("Fetch failed:", err);
+    console.error("Fetch failed:", err);
     showGrade(fallbackResult);
   }  
 }
@@ -285,6 +285,8 @@ function loadModelAccuracy() {
   fetch('/api/accuracy')
     .then(response => response.json())
     .then(data => {
+      if (data.error) throw new Error(data.error);
+
       const accuracy = data.accuracy;
       document.getElementById('accuracy-text').innerText = `Overall Accuracy: ${(accuracy * 100).toFixed(2)}%`;
 
@@ -317,17 +319,25 @@ function loadModelAccuracy() {
               beginAtZero: true,
               max: 100
             }
+          },
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: 'Model Precision and Recall by Grade'
+            }
           }
         }
       });
     })
     .catch(error => {
-      document.getElementById('accuracy-text').innerText = "Failed to load model accuracy.";
+      document.getElementById('accuracy-text').innerText = "⚠️ Failed to load model accuracy.";
       console.error("Accuracy fetch error:", error);
     });
 }
 
-// Call it on page load
-document.addEventListener("DOMContentLoaded", function () {
-  loadModelAccuracy();
-});
+// Call on page load
+document.addEventListener("DOMContentLoaded", loadModelAccuracy);
+

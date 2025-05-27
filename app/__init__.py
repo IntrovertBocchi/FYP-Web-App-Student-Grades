@@ -3,6 +3,7 @@ from app.models import db, User
 from app.utils.core_utils import setup_environment
 from app.predictor import predict_and_validate
 import os
+import json
 
 from dotenv import load_dotenv #load .env support
 load_dotenv() #Load variables from .env
@@ -57,34 +58,60 @@ def create_app():
         if 'username' not in session:
             return jsonify({'error': 'Unauthorized access'}), 403
     
-        data = request.json
+        data = request.get_json()
         subject = data.get('subject')
         inputs = data.get('inputs')
 
-        if not subject or not inputs:
-            return jsonify({'error': 'Missing subject or inputs'}), 400
+        # 🛡️ Validate inputs before proceeding
+        if not isinstance(inputs, dict):
+            return jsonify({'error': 'Invalid input format: inputs must be a dictionary'}), 400
 
         try:
-            score = predict_and_validate(subject, inputs)
-            return jsonify({'score': score})
+            result = predict_and_validate(subject, inputs)
+            return jsonify(result)
+        
         except Exception as e:
-            return jsonify({'error': str(e)}), 500
+            print(f"Error during prediction: {e}")  # Helpful for server logs
+            return jsonify({"error": str(e)}), 400
 
     
     #Accuracy score
     @app.route('/api/accuracy', methods=['GET'])
     def accuracy():
 
-        return jsonify({
-            "accuracy": 0.87,
-            "details": {
-                "HD": {"precision": 0.91, "recall": 0.84},
-                "D":  {"precision": 0.83, "recall": 0.78},
-                "C":  {"precision": 0.75, "recall": 0.74},
-                "P":  {"precision": 0.62, "recall": 0.66},
-                "F":  {"precision": 0.95, "recall": 0.90}
+        try:
+            with open('app/models/accuracy_score.txt') as f:
+                acc = float(f.read())
+
+            with open('app/models/accuracy_report.json') as f:
+                full_report = json.load(f)
+
+            # Mapping of numeric labels to letter grades
+            label_map = {
+                "0": "F",
+                "1": "P",
+                "2": "C",
+                "3": "D",
+                "4": "HD"
             }
-        })
+
+            # Transform the full_report keys to human-readable grades
+            details = {
+                label_map[k]: {
+                    "precision": round(float(v["precision"]), 2),
+                    "recall": round(float(v["recall"]), 2)
+                }
+                for k, v in full_report.items() if k in label_map
+            }
+
+            return jsonify({
+                "accuracy": round(acc, 3),
+                "details": details
+            })
+        
+        except Exception as e:
+            print("ERROR in /api/accuracy:", str(e))  # Log to console
+            return jsonify({"error": str(e)}), 500
 
 
     #Create database tables if needed

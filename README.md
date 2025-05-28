@@ -123,6 +123,34 @@ python train_model.py
 Plots will be saved as image files or shown in a pop-up window depending on your configuration.
 
 ---
+🧪 Running Tests
+Unit tests for the grading formula logic are located in the tests/ directory and can be run using pytest.
+
+1. Make sure your virtual environment is active:
+```bash
+Copy
+Edit
+venv\Scripts\activate  # Windows
+# or
+source venv/bin/activate  # Mac/Linux
+```
+
+2. Run tests:
+```bash
+pytest
+```
+
+All tests should pass if your environment is correctly set up.
+
+Tip:
+If you face an ImportError: No module named 'app', ensure you're in the project root and run:
+
+```bash
+$env:PYTHONPATH = "."  # Windows PowerShell
+# or
+export PYTHONPATH=.     # Mac/Linux or bash
+```
+---
 
 ### 📂 Project Structure
 

@@ -113,6 +113,17 @@ def create_app():
             print("ERROR in /api/accuracy:", str(e))  # Log to console
             return jsonify({"error": str(e)}), 500
 
+    @app.route('/api/confusion_matrix')
+    def get_confusion_matrix():
+        
+        try:
+            with open("app/models/confusion_matrix.json") as f:
+                matrix_data = json.load(f)
+
+            return jsonify(matrix_data)
+        
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
     #Create database tables if needed
     with app.app_context():

@@ -1,3 +1,9 @@
+let currentChartType = 'precision-recall';
+let chartInstance = null;
+let storedAccuracyData = null;
+let storedConfMatrix = null;
+let showingHeatmap = false;
+
 const fieldLabels = {
   report_a: "Report A",
   report_b: "Report B",
@@ -287,57 +293,211 @@ function loadModelAccuracy() {
     .then(data => {
       if (data.error) throw new Error(data.error);
 
-      const accuracy = data.accuracy;
-      document.getElementById('accuracy-text').innerText = `Overall Accuracy: ${(accuracy * 100).toFixed(2)}%`;
+      storedAccuracyData = data;
+      document.getElementById('accuracy-text').innerText = `Overall Accuracy: ${(data.accuracy * 100).toFixed(2)}%`;
+      drawAccuracyChart();
 
-      const labels = Object.keys(data.details);
-      const precisions = labels.map(label => data.details[label].precision * 100);
-      const recalls = labels.map(label => data.details[label].recall * 100);
-
-      const ctx = document.getElementById('accuracy-chart').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Precision (%)',
-              backgroundColor: '#28a745',
-              data: precisions
-            },
-            {
-              label: 'Recall (%)',
-              backgroundColor: '#17a2b8',
-              data: recalls
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: 100
-            }
-          },
-          plugins: {
-            legend: {
-              position: 'top'
-            },
-            title: {
-              display: true,
-              text: 'Model Precision and Recall by Grade'
-            }
-          }
-        }
-      });
     })
+
     .catch(error => {
       document.getElementById('accuracy-text').innerText = "⚠️ Failed to load model accuracy.";
       console.error("Accuracy fetch error:", error);
     });
+  
+  // Preload confusion matrix    
+  fetch('/api/confusion_matrix')
+    .then(response => response.json())
+    .then(data => {
+      if (!data.error) {
+        storedConfMatrix = data;
+      }
+    })
+    .catch(err => console.error("Confusion matrix fetch failed:", err));
 }
+
+function drawAccuracyChart() {
+  if (!storedAccuracyData) return;
+
+  const labels = Object.keys(storedAccuracyData.details);
+  const precisions = labels.map(label => storedAccuracyData.details[label].precision * 100);
+  const recalls = labels.map(label => storedAccuracyData.details[label].recall * 100);
+
+  const ctx = document.getElementById('accuracy-chart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Precision (%)',
+          backgroundColor: '#28a745',
+          data: precisions
+        },
+        {
+          label: 'Recall (%)',
+          backgroundColor: '#17a2b8',
+          data: recalls
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100
+        }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Model Precision and Recall by Grade' }
+      }
+    }
+  });
+}
+
+function drawConfusionMatrixChart() {
+  if (!storedConfMatrix) return;
+
+  const labels = storedConfMatrix.labels;
+  const matrix = storedConfMatrix.matrix;
+
+  const ctx = document.getElementById('accuracy-chart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: labels.map((actualLabel, i) => ({
+        label: `Actual ${actualLabel}`,
+        data: matrix[i],
+        backgroundColor: `hsl(${(i * 60) % 360}, 70%, 60%)`
+      }))
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Confusion Matrix (Predicted Counts by Actual Grade)' }
+      },
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function toggleHeatmap() {
+  if (!storedConfMatrix) return;
+
+  const labels = storedConfMatrix.labels;
+  const matrix = storedConfMatrix.matrix;
+
+  const ctx = document.getElementById('accuracy-chart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+
+  if (!showingHeatmap) {
+    // Show heatmap
+    chartInstance = new Chart(ctx, {
+      type: 'matrix',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Confusion Matrix Heatmap',
+          data: matrix.flatMap((row, rowIndex) =>
+            row.map((value, colIndex) => ({
+              x: labels[colIndex],
+              y: labels[rowIndex],
+              v: value
+            }))
+          ),
+          backgroundColor(ctx) {
+            const value = ctx.dataset.data[ctx.dataIndex].v;
+            const max = Math.max(...matrix.flat());
+            const intensity = value / max;
+            return `rgba(255, 99, 132, ${intensity})`;
+          },
+          width: ({ chart }) => (chart.chartArea || {}).width / labels.length - 2,
+          height: ({ chart }) => (chart.chartArea || {}).height / labels.length - 2
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: () => '',
+              label: ctx => `Actual: ${ctx.raw.y}, Predicted: ${ctx.raw.x}, Count: ${ctx.raw.v}`
+            }
+          },
+          title: {
+            display: true,
+            text: 'Confusion Matrix Heatmap'
+          }
+        },
+        scales: {
+          x: { type: 'category', title: { display: true, text: 'Predicted' } },
+          y: { type: 'category', title: { display: true, text: 'Actual' } }
+        }
+      }
+    });
+
+    // Update state and button
+    showingHeatmap = true;
+    document.getElementById('heatmap-btn').innerText = "👁️ View Stacked Bar";
+
+  } else {
+    // Show stacked bar again
+    drawConfusionMatrixChart();
+    showingHeatmap = false;
+    document.getElementById('heatmap-btn').innerText = "👁️ View Heatmap";
+  }
+}
+
+
+function toggleChart() {
+  
+  if (currentChartType === 'precision-recall') {
+
+    drawConfusionMatrixChart();
+    currentChartType = 'confusion-matrix';
+    document.getElementById('heatmap-btn').style.display = 'inline-block';
+    document.getElementById('heatmap-btn').innerText = "👁️ View Heatmap";
+    showingHeatmap = false; // reset when switching back
+  } else {
+    drawAccuracyChart();
+    currentChartType = 'precision-recall';
+    document.getElementById('heatmap-btn').style.display = 'none';
+    showingHeatmap = false; // reset when switching back
+  }
+}
+
+// Toggle and check password
+document.addEventListener("DOMContentLoaded", function () {
+  const toggles = document.querySelectorAll(".toggle-password");
+
+  toggles.forEach(toggle => {
+    toggle.addEventListener("click", function () {
+      const targetId = this.getAttribute("data-target");
+      const input = document.getElementById(targetId);
+
+      if (input) {
+        const isPassword = input.getAttribute("type") === "password";
+        input.setAttribute("type", isPassword ? "text" : "password");
+
+        // Toggle icon
+        this.classList.toggle("bi-eye-slash");
+        this.classList.toggle("bi-eye");
+      }
+    });
+  });
+});
 
 // Call on page load
 document.addEventListener("DOMContentLoaded", loadModelAccuracy);
+
 

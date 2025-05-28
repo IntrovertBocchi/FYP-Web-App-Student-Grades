@@ -316,13 +316,26 @@ function loadModelAccuracy() {
 }
 
 function drawAccuracyChart() {
-  if (!storedAccuracyData) return;
 
-  const labels = Object.keys(storedAccuracyData.details);
-  const precisions = labels.map(label => storedAccuracyData.details[label].precision * 100);
-  const recalls = labels.map(label => storedAccuracyData.details[label].recall * 100);
+  if (!storedAccuracyData) {
+    console.warn("No accuracy data.");
+    return;
+  }
 
-  const ctx = document.getElementById('accuracy-chart').getContext('2d');
+  const canvas = document.getElementById('accuracy-chart');
+  if (!canvas) {
+    console.error("Canvas element #accuracy-chart not found!");
+    return;
+  }
+
+  const ctx = canvas.getContext('2d');
+  const details = storedAccuracyData.details;
+
+  const labels = Object.keys(details);
+  const precisions = labels.map(label => details[label].precision * 100);
+  const recalls = labels.map(label => details[label].recall * 100);
+
+
   if (chartInstance) chartInstance.destroy();
 
   chartInstance = new Chart(ctx, {
@@ -357,6 +370,8 @@ function drawAccuracyChart() {
     }
   });
 }
+
+
 
 function drawConfusionMatrixChart() {
   if (!storedConfMatrix) return;

@@ -9,8 +9,8 @@ def calculate_inf_grade(data):
     - report_a: float (out of 25)
     - report_b: float (out of 20)
     - group_exercise: float (out of 5)
-    - cla_scores: list of 3 floats (total out of 30)
-    - quiz_scores: list of 2 floats (total out of 30, scaled down to 20)
+    - cla_scores: float (out of 10, scaled to 30%)
+    - quiz_scores: float (out of 15, scaled to 20%)
 
     Returns:
         float: Final grade percentage (rounded to 2 decimals)
@@ -31,7 +31,7 @@ def calculate_cos_grade(data):
     Manually calculates the total grade for COS subjects.
 
     Expected structure of 'data' dict:
-    - lab_exercises: list of 10 floats (each out of 1, total out of 10)
+    - lab_exercises: float (out of 10, scaled to 10%)
     - assignment1: float (out of 100)
     - assignment2: float (out of 100)
     - midterm: float (out of 35)
@@ -56,7 +56,7 @@ def calculate_adv_grade(data):
     Manually calculates the total grade for ADV subjects.
 
     Expected structure of 'data' dict:
-    - quiz_scores: list of 2 floats (each out of 20, total out of 40)
+    - quiz_scores: float (out of 20, scaled to 20%)
     - assignment1: float (out of 10)
     - assignment2: float (out of 40)
     - obow_test: float (out of 30)

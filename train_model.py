@@ -66,12 +66,25 @@ model.fit(X_train, y_train)
 # Step 8: Evaluate
 y_pred = model.predict(X_test)
 
+from sklearn.metrics import confusion_matrix
+
 # Ensure all labels are represented in the report
 all_labels = list(label_map.values())          # [0, 1, 2, 3, 4]
 all_target_names = list(label_map.keys())      # ["F", "P", "C", "D", "HD"]
 
+# Step 8.1: Save confusion matrix
+cm = confusion_matrix(y_test, y_pred, labels=all_labels)
+cm_list = cm.tolist()  # JSON serializable
+with open('app/models/confusion_matrix.json', 'w') as f:
+    json.dump({
+        "matrix": cm_list,
+        "labels": all_target_names
+    }, f, indent=4)
+
+print("📊 Confusion matrix saved to app/models/confusion_matrix.json")
 print("✅ Accuracy:", accuracy_score(y_test, y_pred))
 print("\n📊 Classification Report:\n")
+
 print(classification_report(
     y_test,
     y_pred,

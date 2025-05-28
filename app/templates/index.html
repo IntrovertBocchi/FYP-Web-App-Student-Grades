@@ -6,11 +6,17 @@
   <link rel="stylesheet" href="{{url_for('static', filename='index.css') }}">  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{{ url_for('static', filename='index.js') }}" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.1.0/dist/chartjs-chart-matrix.min.js"></script>
 </head>
 
 <body>
   <div class="page-wrapper">
     <div class="container">
+
+      <div style="display: flex; justify-content: flex-end;">
+        <a href="{{ url_for('logout') }}" class="logout-btn">🔓 Logout</a>
+      </div>
+      
       <h2>Student Grade Predictor</h2>
 
       <label for="program">Select Program:</label>
@@ -28,6 +34,8 @@
 
       <div id="accuracy-section">
         <h3>📊 Model Accuracy Overview</h3>
+        <button onclick="toggleChart()">🔄 Toggle Chart</button>
+        <button id="heatmap-btn" onclick="toggleHeatmap()" style="display: none;">View Heatmap</button>
         <canvas id="accuracy-chart"></canvas>
         <p id="accuracy-text"></p>
       </div>

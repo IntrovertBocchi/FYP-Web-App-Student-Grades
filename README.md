@@ -85,6 +85,11 @@ INIT_HASH=your_generated_hash_here
 
 ### 7. Run the Flask App
 
+Ensure the following files are present:
+- `instance/grades.db`
+- `config.py`
+- Trained `.pkl` models
+
 ```bash
 flask run
 ```
@@ -107,6 +112,24 @@ This will start the backend API and serve the application locally.
 * Access requires a session-based login and a hidden master password.
 * SQL-based authentication is used for managing approved users.
 * Authentication credentials and `.env` files are excluded from GitHub for security.
+
+🔐 Secure Configuration (.env Required)
+This app requires a .env file containing secure keys for:
+
+* Verifying app integrity (tamper detection)
+* Unlocking restricted features via a master key
+* Other backend protection variables
+```bash
+# Example of required fields (actual values will be shared securely)
+SECRET_KEY=your_secret_key_here
+INIT_HASH=your_generated_hash_here
+MASTER_PASSWORD=your_master_password_here
+```
+⚠️ For security reasons, this file is not included in the repository.
+✅ It will be shared securely (e.g. via encrypted ZIP or internal messaging).
+❌ Do not share your .env file publicly or commit it to version control.
+
+Once received, place the .env file in the project root directory before running the app.
 
 ---
 

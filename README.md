@@ -61,7 +61,7 @@ Once data is generated, train and save machine learning models:
 python train_model.py
 ```
 
-This will produce `.pkl` files for each subject (e.g., `model_ADV.pkl`, `model_COS.pkl`, `model_INF.pkl`).
+This will produce a `.pkl` file for each subject (e.g., `grade_predictor.pkl`).
 
 ---
 

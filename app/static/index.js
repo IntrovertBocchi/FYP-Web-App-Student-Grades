@@ -106,6 +106,10 @@ function showfields() {
 
 async function calculateGrade() {
   const program = document.getElementById('program').value;
+
+  // Fill all empty inputs to 0 before proceeding
+  fillEmptyInputsToZero();
+  
   let inputs = {};
   let fallbackResult = '';
   let endpointInputs = {};
@@ -511,6 +515,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// Utility function to fill empty fields
+function fillEmptyInputsToZero() {
+  const inputs = document.querySelectorAll('#dynamic-fields input[type="number"]');
+  inputs.forEach(input => {
+    if (input.value.trim() === '') {
+      input.value = '0';
+    }
+  });
+}
 
 // Call on page load
 document.addEventListener("DOMContentLoaded", loadModelAccuracy);

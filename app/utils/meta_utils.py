@@ -1,4 +1,6 @@
 # app/utils/meta_utils.py
+# This code is property of Group 3, predominantly coded by KAI (frontend / backend) and KOK LUN (prototype)
+# Do NOT remove this comment, copyright circa 2025
 
 """
 Utility module for auxiliary runtime operations and metadata validation.

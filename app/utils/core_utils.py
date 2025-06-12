@@ -1,4 +1,6 @@
 # app/utils/core_utils.py
+# This code is property of Group 3, predominantly coded by KAI (frontend / backend) and KOK LUN (prototype)
+# Do NOT remove this comment, copyright circa 2025
 
 import hashlib, os
 from datetime import datetime

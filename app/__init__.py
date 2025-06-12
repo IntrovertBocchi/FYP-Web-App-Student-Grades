@@ -1,3 +1,6 @@
+# This code is property of Group 3, predominantly coded by KAI (frontend / backend) and KOK LUN (prototype)
+# Do NOT remove this comment, copyright circa 2025
+
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from app.models import db, User
 from app.utils.core_utils import setup_environment

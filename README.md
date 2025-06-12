@@ -8,6 +8,7 @@ Follow the steps below to set up and run the **Student Grading Predictor** appli
 
 ```bash
 git clone https://github.com/KokLun26/Student-Grading-Predictor.git
+git clone https://github.com/IntrovertBocchi/FYP-Web-App-Student-Grades.git
 cd Student-Grading-Predictor
 ```
 

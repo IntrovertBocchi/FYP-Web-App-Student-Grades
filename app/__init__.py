@@ -1,5 +1,6 @@
 # This code is property of Group 3, predominantly coded by KAI (frontend / backend) and KOK LUN (prototype)
 # Do NOT remove this comment, copyright circa 2025
+# Web App should only be utilized by AUTHORIZED GROUP MEMBERS (KAI, KOK LUN, YONG JIE)
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from app.models import db, User

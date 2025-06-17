@@ -72,3 +72,4 @@ def calculate_adv_grade(data):
         (data['obow_test'] / 30) * 30            # Contributes 30%
     )
     return round(total, 2)
+

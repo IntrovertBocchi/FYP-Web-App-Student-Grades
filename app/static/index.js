@@ -524,12 +524,33 @@ document.addEventListener("DOMContentLoaded", function () {
 // Utility function to fill empty fields
 function fillEmptyInputsToZero() {
   const inputs = document.querySelectorAll('#dynamic-fields input[type="number"]');
+  let anyFilled = false;
+
   inputs.forEach(input => {
     if (input.value.trim() === '') {
       input.value = '0';
+      anyFilled = true;
     }
   });
+
+  if (anyFilled) {
+    showTemporaryAlert("Empty fields have been auto-filled with 0.");
+  }
 }
+
+// Temporary alert function
+function showTemporaryAlert(message) {
+  const alertBox = document.createElement('div');
+  alertBox.className = 'temp-alert';
+  alertBox.innerText = message;
+
+  document.body.appendChild(alertBox);
+
+  setTimeout(() => {
+    alertBox.remove();
+  }, 2500); // disappears after 2.5 seconds
+}
+
 
 // Call on page load
 document.addEventListener("DOMContentLoaded", loadModelAccuracy);

@@ -240,7 +240,7 @@ async function calculateGrade() {
     const result = await response.json();
 
     if (response.ok) {
-      showGrade(result.predicted_score);
+       showGrade(result.predicted_score, result.passing_guidance);
     } else {
       const errorMessage = result?.error || "Unexpected backend error";
       console.error("Backend error:", errorMessage);
@@ -254,7 +254,7 @@ async function calculateGrade() {
 
 
 
-function showGrade(score) {
+function showGrade(score, guidance = null) {
 
   let grade = '';
   const percentage = parseFloat(score);
@@ -270,11 +270,16 @@ function showGrade(score) {
   else grade = 'F';
   
   
-  document.getElementById('result').innerText = `
+  let resultText = `
     Score: ${percentage.toFixed(2)}%
     Grade: ${grade}
   `;
- 
+
+  if (guidance) {
+    resultText += `\n\n📌 Passing Guidance:\n${guidance}`;
+  }
+
+  document.getElementById('result').innerText = resultText;
 }
 
 
